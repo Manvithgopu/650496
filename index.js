@@ -3,7 +3,8 @@ const mongoose = require("mongoose")
 const path = require("path")
 const app = express()
 
-//const Doctor = require("./doctor_schema")
+const Doctor = require("./doctor_schema")
+const User = require("./user_schema")
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs')
@@ -14,7 +15,8 @@ mongoose.connect('mongodb+srv://vikasyamsani021203:Vikas2003!@cluster0.axat5s3.m
     .then(() => {
         console.log("CONNECTION IS OK!")
     })
-    .catch((er) => {
+    .catch((er) => 
+    {
         console.log(er)
     })
 
@@ -22,13 +24,38 @@ app.get("/", (req, res) => {
     res.render("index")
 })
 
+app.get("/home_doctor", (req, res) => {
+    res.render("home_doctor")
+})
+
+app.get("/home_user", (req, res) => {
+    res.render("home_user")
+})
+
+app.get("/doctor", (req, res) => {
+    res.render("doctor")
+})
+
+app.get("/user", (req, res) => {
+    res.render("user")
+})
+
+//app.get("/doctor_signedin", (req, res) => {
+//    res.render("doctor_signedin")
+//})
+
+//app.post("/doctor_signedin", (req, res) => {
+//    res.render("doctor_signedin",{})
+//})
+
 app.post("/submit-form", (req, res) => {
     const submit = req.body.action;
     if (submit == "Doctor") {
-        res.render("home")
+        res.redirect("/doctor")
     }
-    else if (submit == "isuser") {
-        res.render("home2")
+    else if (submit == "isuser") 
+    {
+        res.redirect("/home_user")
     }
 })
 
@@ -44,17 +71,26 @@ app.post("/user", (req,res) =>{
     }
 })
 
-app.post("/home2", (req,res) =>{
-    res.render("home2")
+app.post("/home_user", (req,res) =>{
+    res.render("home_user")
 })
 
 app.post("/doctor", async(req,res) =>{
-    console.log(req.body)
-    res.render("doctor")
+    const option = req.body.action
+    if(option === "profile")
+    {
+        res.render("doctor")
+    }
+    else if(option === "slot")
+    {
+        res.render("slot")
+    }
 })
 
-app.post("/home", async(req,res) =>{
-    res.render("home")
+app.post("/home_doc", async(req,res) =>{
+    const newDoctor = new Doctor(req.body);
+    await newDoctor.save();
+    res.render("doctor_signedin", { newDoctor })
 })
 
 app.listen(3000, () => {
