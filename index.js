@@ -40,13 +40,17 @@ app.get("/user", (req, res) => {
     res.render("user")
 })
 
-//app.get("/doctor_signedin", (req, res) => {
-//    res.render("doctor_signedin")
-//})
+app.get("/appointment", (req, res) => {
+    res.render("appointment")
+})
 
-//app.post("/doctor_signedin", (req, res) => {
-//    res.render("doctor_signedin",{})
-//})
+app.get("/map", (req, res) => {
+    res.render("map")
+})
+
+app.post("/map", (req, res) => {
+    res.redirect("/map")
+})
 
 app.post("/submit-form", (req, res) => {
     const submit = req.body.action;
@@ -55,7 +59,7 @@ app.post("/submit-form", (req, res) => {
     }
     else if (submit == "isuser") 
     {
-        res.redirect("/home_user")
+        res.redirect("/user")
     }
 })
 
@@ -71,8 +75,14 @@ app.post("/user", (req,res) =>{
     }
 })
 
-app.post("/home_user", (req,res) =>{
-    res.render("home_user")
+app.post("/home_user", async(req,res) =>{
+    const newUser = new User(req.body);
+    await newUser.save();
+    res.render("home_user", { newUser })
+})
+
+app.post("/appointment", async(req,res) =>{
+    res.redirect("/appointment")
 })
 
 app.post("/doctor", async(req,res) =>{
@@ -88,8 +98,8 @@ app.post("/doctor", async(req,res) =>{
 })
 
 app.post("/home_doc", async(req,res) =>{
-    const newDoctor = new Doctor(req.body);
-    await newDoctor.save();
+    const newDoctor = new Doctor(req.body)
+    await newDoctor.save()
     res.render("doctor_signedin", { newDoctor })
 })
 
